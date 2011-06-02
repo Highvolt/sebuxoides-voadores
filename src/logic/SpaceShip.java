@@ -1,5 +1,8 @@
 package logic;
 
+import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
+
 public class SpaceShip {
 
 	/* VARIABLES */
@@ -10,6 +13,7 @@ public class SpaceShip {
 	private float aceleration;
 	private float rotation;
 	private float accRotation;
+//	Rectangle rect;
 
 	/* METHODS */
 	public float getX() {
@@ -35,6 +39,20 @@ public class SpaceShip {
 	public void setY(float y) {
 		pos_y = y;
 	}
+
+	public Rectangle2D getRect2D() {
+		Rectangle2D a= new Rectangle((int)pos_x, (int)pos_y, 36, 30);
+		return a;
+	}
+	
+	public Rectangle getRect() {
+		Rectangle a= new Rectangle((int)pos_x, (int)pos_y, 36, 30);
+		return a;
+	}
+
+	//public void setRect(Rectangle2D rect) {
+		//this.rect = rect;
+	//}
 
 	public void setAceleration(float ac) {
 		aceleration = ac;
@@ -76,5 +94,8 @@ public class SpaceShip {
 		this.vy=0;
 		this.aceleration = aceleration;
 		this.rotation = rotation;
+		//rect=new Rectangle(30,30);
+		//rect.get
+		
 	}
 }

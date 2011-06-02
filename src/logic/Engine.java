@@ -1,5 +1,6 @@
 package logic;
 
+import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
@@ -27,10 +28,11 @@ public class Engine {
 	boolean soundeffects=true;
 	private double drag=0.025;
 	private String playername="";
-	
+	private int bmax=7;
+
 	/* METHODS */
 
-	
+
 	public boolean isVivo() {
 		return vivo;
 	}
@@ -140,10 +142,14 @@ public class Engine {
 		}
 	}
 
-	public void shoot(float x, float y) {
+	public boolean shoot(float x, float y) {
 		System.out.println("Shooted");
-		this.bullets.add(new Bullet(x, y, default_bullet_acc, spaceShip
-				.getRotation()));
+		if(bullets.size()<bmax){
+			this.bullets.add(new Bullet(x, y, default_bullet_acc, spaceShip
+					.getRotation()));
+			return true;
+		}
+		return false;
 	}
 
 	public void acceleration() {
@@ -220,7 +226,8 @@ public class Engine {
 
 			for (int j=0;j< asteroids.size();j++) {
 				Asteroid a=asteroids.get(j);
-				if(Math.abs(v.getPos_x()-a.getX())<=10*a.getType() && Math.abs(v.getPos_y()-a.getY())<=10*a.getType()){
+				if(a.getPoly().intersects(new Rectangle((int)v.getPos_x(),(int)v.getPos_y(),5,5))){
+				//if(Math.abs(v.getPos_x()-a.getX())<=10*a.getType() && Math.abs(v.getPos_y()-a.getY())<=10*a.getType()){
 					System.out.println("Embateu!");
 					if(bullets.size()!=0){
 						bullets.remove(i);
@@ -250,7 +257,8 @@ public class Engine {
 
 
 
-			if(Math.abs(v.getX()-getSpaceShip().getX())<2 && Math.abs(v.getY()-getSpaceShip().getY())<2){
+			//if(Math.abs(v.getX()-getSpaceShip().getX())<2 && Math.abs(v.getY()-getSpaceShip().getY())<2){
+			if(getAsteroids().get(i).getPoly().intersects(getSpaceShip().getRect2D())){
 				setVivo(false);
 				if(soundeffects){
 					ship_explosion.stop();
