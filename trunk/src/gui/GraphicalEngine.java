@@ -1,10 +1,13 @@
 package gui;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
+import java.awt.Polygon;
+import java.awt.Stroke;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -40,8 +43,8 @@ public class GraphicalEngine extends JPanel {
 	private String currentname;
 	private boolean blink=true;
 	long tempo_ini=-1;
-	
-	
+
+
 	public GraphicalEngine clone(){
 		GraphicalEngine g=new GraphicalEngine();
 		g.game=game;
@@ -59,7 +62,7 @@ public class GraphicalEngine extends JPanel {
 		return g;
 	}
 	public void setter(GraphicalEngine g){
-		
+
 		g.game=game;
 		g.firing=firing;
 		g.ship=ship;
@@ -139,17 +142,17 @@ public class GraphicalEngine extends JPanel {
 		} catch (LineUnavailableException e) {
 			e.printStackTrace();
 		}
-	//	this.pont.add(new Highscores("Guida", 301));
-	//	this.pont.add(new Highscores("Lodo", 10));
-	//	this.pont.add(new Highscores("Pedro", 101));
-	//	this.pont.add(new Highscores("burro", 1));
+		//	this.pont.add(new Highscores("Guida", 301));
+		//	this.pont.add(new Highscores("Lodo", 10));
+		//	this.pont.add(new Highscores("Pedro", 101));
+		//	this.pont.add(new Highscores("burro", 1));
 		Collections.sort(pont);
-		
+
 
 
 
 	}
-	
+
 	//mudar para a logica
 	private void addScore(){
 		Highscores h=new Highscores(game.getPlayername(), game.getPontuacao());
@@ -178,7 +181,15 @@ public class GraphicalEngine extends JPanel {
 			if(game.isVivo()){
 				this.game.update();
 			}else{
-game=null;
+
+				game.ship_explosion.stop();
+				game.ship_explosion.setMicrosecondPosition(0);
+				game.ship_explosion.start();
+
+				addScore();
+
+
+				game=null;
 			}
 		}else{
 			if(Math.abs(System.currentTimeMillis()-this.tempo_ini)>1000){
@@ -188,10 +199,8 @@ game=null;
 				}else{
 					blink=true;
 					this.tempo_ini=System.currentTimeMillis();
-				}
-				
-				
-				
+				}		
+
 			}
 			for(int i=0;i<this.pont.size();i++){
 				Highscores a=pont.get(i);
@@ -204,15 +213,8 @@ game=null;
 					break;
 				}
 			}
-			this.repaint();
-			
+			this.repaint();	
 		}
-
-
-
-
-
-
 	}
 
 	public Engine getGame() {
@@ -232,14 +234,15 @@ game=null;
 	}
 
 	public void shoot(){
-		if(soundeffects){
-			shootfx.stop();
-			shootfx.setMicrosecondPosition(0);
-			shootfx.start();
-		}
-		game.shoot(game
+
+		if(game.shoot(game
 				.getSpaceShip().getX() + ship.getWidth() / 8-5, game
-				.getSpaceShip().getY() + ship.getHeight() / 8-5);
+				.getSpaceShip().getY() + ship.getHeight() / 8-5))
+			if(soundeffects){
+				shootfx.stop();
+				shootfx.setMicrosecondPosition(0);
+				shootfx.start();
+			}
 
 	}
 
@@ -275,33 +278,55 @@ game=null;
 				game.setWidth(this.getWidth());
 				Color c=new Color(255, 255, 255);
 				g.setColor(c);
+
 				g.drawString(game.getPlayername() + "  "+Integer.toString(game.getPontuacao()), 10, 10);
 				for(int i=0;i<game.getBullets().size();i++){
 
-					g.drawOval((int)game.getBullets().get(i).getPos_x(),(int)game.getBullets().get(i).getPos_y(),10,10);
+					g.drawRect((int)game.getBullets().get(i).getPos_x(),(int)game.getBullets().get(i).getPos_y(),5,5);
+					//g.drawOval((int)game.getBullets().get(i).getPos_x(),(int)game.getBullets().get(i).getPos_y(),10,10);
 				}
-
+				Color original=g.getColor();
+				 
+					BasicStroke dashed = new BasicStroke(3.0f);
+					Stroke saves=g.getStroke();
+					g.setStroke(dashed);
+				
 				for(int i=0;i<game.getAsteroids().size();i++){
+					//g.translate(game.getAsteroids().get(i).getX(), game.getAsteroids().get(i).getY());
+					g.setColor(game.getAsteroids().get(i).getColor());
+					g.drawPolygon(game.getAsteroids().get(i).getPoly());
+
 					//g.drawRect((int)game.getAsteroids().get(i).getX(),(int)game.getAsteroids().get(i).getY(),10*game.getAsteroids().get(i).getType(),10*game.getAsteroids().get(i).getType());
-					g.drawImage(Toolkit.getDefaultToolkit().createImage(asteroid.getSource()), (int)game.getAsteroids().get(i).getX(),(int)game.getAsteroids().get(i).getY(),10*game.getAsteroids().get(i).getType(),10*game.getAsteroids().get(i).getType(),null);
-					if(Math.abs(game.getAsteroids().get(i).getX()-game.getSpaceShip().getX())<ship.getWidth()/8 && Math.abs(game.getAsteroids().get(i).getY()-game.getSpaceShip().getY())<ship.getHeight()/8){
-						game.ship_explosion.stop();
+					//g.drawImage(Toolkit.getDefaultToolkit().createImage(asteroid.getSource()), (int)game.getAsteroids().get(i).getX(),(int)game.getAsteroids().get(i).getY(),10*game.getAsteroids().get(i).getType(),10*game.getAsteroids().get(i).getType(),null);
+					//if(Math.abs(game.getAsteroids().get(i).getX()-game.getSpaceShip().getX())<ship.getWidth()/8 && Math.abs(game.getAsteroids().get(i).getY()-game.getSpaceShip().getY())<ship.getHeight()/8){
+					/*
+					if(game.getAsteroids().get(i).getPoly().intersects(game.getSpaceShip().getRect2D())){	
+					game.ship_explosion.stop();
 						game.ship_explosion.setMicrosecondPosition(0);
 						game.ship_explosion.start();
 						if(game.isVivo()){
 							addScore();
 						}
 						game.setVivo(false);
-						
-					
-					}
 
+
+					}
+					 */
+					//g.translate(-game.getAsteroids().get(i).getX(), -game.getAsteroids().get(i).getY());
 
 				}
+				g.setColor(original);
+				g.setStroke(saves);
 				if(!cheatao){
 					g.rotate(game.getSpaceShip().getRotation(), (int) game
 							.getSpaceShip().getX() + ship.getWidth() / 8, (int) game
 							.getSpaceShip().getY() + ship.getHeight() / 8);
+					//System.out.println(ship.getWidth() / 8+" "+ship.getHeight() / 8);
+					/*	g.drawRect(game
+							.getSpaceShip().getRect().x, game
+							.getSpaceShip().getRect().y, game
+							.getSpaceShip().getRect().width, game
+							.getSpaceShip().getRect().height);*/
 					if (ship != null && ship_fired!=null) {
 						if(!(firing)){
 							g.drawImage(Toolkit.getDefaultToolkit().createImage(ship.getSource()),(int) game.getSpaceShip().getX(),
@@ -333,12 +358,9 @@ game=null;
 				g.drawString("Press Enter to Continue", this.getWidth()/2-g.getFontMetrics(f).stringWidth("Press Enter to Continue")/2, this.getHeight()/2-g.getFontMetrics(f).getHeight()/2);
 				g.drawString("Press ESC to change name", this.getWidth()/2-g.getFontMetrics(f).stringWidth("Press ESC to change name")/2, this.getHeight()/2+g.getFontMetrics(f).getHeight()/2);
 			}
-			
+
 		}
 	}
-
-
-
 
 	void paintHighscores(Graphics2D g){
 		Color white=new Color(255, 255, 255);
@@ -359,10 +381,5 @@ game=null;
 				break;
 			}
 		}
-
-
 	}
-
-
-
 }
