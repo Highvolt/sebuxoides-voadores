@@ -17,6 +17,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JTabbedPane;
 import java.awt.GridBagConstraints;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -61,6 +62,7 @@ public class Asteroids {
 	private boolean wereinfull=false;
 	private JFrame janfull = null;  //  @jve:decl-index=0:visual-constraint="1174,33"
 	private GraphicalEngine panelfull = null;
+	private HashSet<Integer> pressed = new HashSet<Integer>();
 	/**
 	 * This method initializes jFrame
 	 * 
@@ -75,14 +77,15 @@ public class Asteroids {
 			Timer timer = new Timer(30, new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					if(!paused){
+						keyanalizer();
 						//getJPanel().requestFocus();
 						counter++;
 						ciclos++;
 						getJPanel().update();
 						getJFrame().repaint();
-
+						
 						if(ciclos>=15){
-							getJPanel().setFiring(false);
+							getPanelfull().setFiring(false);
 							ciclos=0;
 						}
 						if(counter>=40 && getJPanel().getGame()!=null){
@@ -112,6 +115,88 @@ public class Asteroids {
 		return jContentPane;
 	}
 
+	
+	private void keyanalizer(){
+		if(getPanelfull().getGame()!=null && getPanelfull().getGame().isVivo()){
+			for(int a:pressed){
+				if (a == 37) {
+					//getPanelfull().setFiring(false);
+					getPanelfull().getGame().getSpaceShip().setRotation((float)(getPanelfull().getGame().getSpaceShip().getRotation()-0.2));
+				}
+				if (a == 39) {
+					//getPanelfull().setFiring(false);
+					getPanelfull().getGame().getSpaceShip().setRotation((float)(getPanelfull().getGame().getSpaceShip().getRotation()+0.2));
+				}
+				if(a==38){
+					ciclos=0;
+					getPanelfull().setFiring(true);
+					getPanelfull().getGame().acceleration();
+
+				}
+				if(a==32){
+					//getPanelfull().setFiring(false);
+					getPanelfull().shoot();
+				}
+				if(a==27){
+					if(fullscreen){
+						pressed.clear();
+						changeScreen();
+						wereinfull=true;
+					}else{
+						wereinfull=false;
+					}
+					getJFrame().setEnabled(false);
+					getNome().setVisible(true);
+					//pressed.remove(27);
+					pressed.clear();
+					paused=true;
+				}
+				if(a==70){/*
+					Toolkit tk = Toolkit.getDefaultToolkit();  
+					int xSize = ((int) tk.getScreenSize().getWidth());  
+					int ySize = ((int) tk.getScreenSize().getHeight());
+					getJFrame().setSize(xSize,ySize);  
+					getJFrame().setVisible(false);
+					getJFrame().setUndecorated(true);
+					getJFrame().setVisible(true);
+					getJFrame().repaint();
+				 */
+					pressed.remove(70);
+					changeScreen();
+
+
+				}
+
+			}
+		}else{
+			for(int a:pressed){
+				if(a==10){
+					pressed.clear();
+					restart();
+				}
+				if(a==27){
+					if(fullscreen){
+						pressed.clear();
+						changeScreen();
+					}
+					getJFrame().setEnabled(false);
+					getNome().setVisible(true);
+					//pressed.remove(27);
+					pressed.clear();
+					paused=true;
+
+				}
+				if(a==70){
+					//pressed.remove(70);
+					pressed.clear();
+					changeScreen();
+
+
+				}
+			}
+		}
+	}
+	
 	/**
 	 * This method initializes jPanel
 	 * 
@@ -156,9 +241,10 @@ public class Asteroids {
 				}
 			});*/
 			jPanel.addKeyListener(new java.awt.event.KeyListener() {
-				private final Set<Integer> pressed = new HashSet<Integer>();
+				
 				public void keyPressed(java.awt.event.KeyEvent e) {
 					//System.out.println("keyPressed()"); // TODO Auto-generated Event stub keyPressed()
+					pressed.remove((Integer)e.getKeyCode());
 					pressed.add(e.getKeyCode());
 					System.out.println("keyPressed() " + e.getKeyCode()); // TODO
 					// Auto-generated
@@ -170,83 +256,16 @@ public class Asteroids {
 					// 38 cima
 					// 40 baixo
 					// 32 spacebar
-					if(getJPanel().getGame()!=null && getJPanel().getGame().isVivo()){
-						for(int a:pressed){
-							if (a == 37) {
-								//getJPanel().setFiring(false);
-								getJPanel().getGame().getSpaceShip().setRotation((float)(getJPanel().getGame().getSpaceShip().getRotation()-0.2));
-							}
-							if (a == 39) {
-								//getJPanel().setFiring(false);
-								getJPanel().getGame().getSpaceShip().setRotation((float)(getJPanel().getGame().getSpaceShip().getRotation()+0.2));
-							}
-							if(a==38){
-								ciclos=0;
-								getJPanel().setFiring(true);
-								getJPanel().getGame().acceleration();
+					
 
-							}
-							if(a==32){
-								//getJPanel().setFiring(false);
-								getJPanel().shoot();
-							}
-							if(a==27){
-								if(fullscreen){
-									changeScreen();
-									wereinfull=true;
-								}else{
-									wereinfull=false;
-								}
-								getJFrame().setEnabled(false);
-								getNome().setVisible(true);
-								pressed.remove(27);
-								paused=true;
-							}
-							if(a==70){/*
-								Toolkit tk = Toolkit.getDefaultToolkit();  
-								int xSize = ((int) tk.getScreenSize().getWidth());  
-								int ySize = ((int) tk.getScreenSize().getHeight());
-								getJFrame().setSize(xSize,ySize);  
-								getJFrame().setVisible(false);
-								getJFrame().setUndecorated(true);
-								getJFrame().setVisible(true);
-								getJFrame().repaint();
-							 */
-								pressed.remove(70);
-								changeScreen();
-
-
-							}
-
-						}
-					}else{
-						for(int a:pressed){
-							if(a==10){
-								restart();
-							}
-							if(a==27){
-								if(fullscreen){
-									changeScreen();
-								}
-								getJFrame().setEnabled(false);
-								getNome().setVisible(true);
-								pressed.remove(27);
-								paused=true;
-
-							}
-							if(a==70){
-								pressed.remove(70);
-								changeScreen();
-
-
-							}
-						}
-					}
+					//keyanalizer();
 				}
 				public void keyTyped(java.awt.event.KeyEvent e) {
 				}
 				public void keyReleased(java.awt.event.KeyEvent e) {
-					pressed.remove(e.getKeyCode());
+					System.out.println("Released "+e.getKeyCode());
+					
+					pressed.remove((Integer)e.getKeyCode());
 				}
 			});
 			jPanel.setFocusable(true);
@@ -793,13 +812,15 @@ public class Asteroids {
 		if (panelfull == null) {
 			panelfull =new GraphicalEngine(1);
 			getJPanel().setter(panelfull);
+			//panelfull.setPont(null);
 			//panelfull.setGame(getJPanel().getGame());
 			//panelfull.setLayout(new BorderLayout());
 
 			panelfull.addKeyListener(new java.awt.event.KeyListener() {
-				private final Set<Integer> pressed = new HashSet<Integer>();
+				//private ArrayList<Integer> pressed = new ArrayList<Integer>();
 				public void keyPressed(java.awt.event.KeyEvent e) {
 					//System.out.println("keyPressed()"); // TODO Auto-generated Event stub keyPressed()
+					pressed.remove((Integer)e.getKeyCode());
 					pressed.add(e.getKeyCode());
 					System.out.println("keyPressed() " + e.getKeyCode()); // TODO
 					// Auto-generated
@@ -811,83 +832,12 @@ public class Asteroids {
 					// 38 cima
 					// 40 baixo
 					// 32 spacebar
-					if(getPanelfull().getGame()!=null && getPanelfull().getGame().isVivo()){
-						for(int a:pressed){
-							if (a == 37) {
-								//getPanelfull().setFiring(false);
-								getPanelfull().getGame().getSpaceShip().setRotation((float)(getPanelfull().getGame().getSpaceShip().getRotation()-0.2));
-							}
-							if (a == 39) {
-								//getPanelfull().setFiring(false);
-								getPanelfull().getGame().getSpaceShip().setRotation((float)(getPanelfull().getGame().getSpaceShip().getRotation()+0.2));
-							}
-							if(a==38){
-								ciclos=0;
-								getPanelfull().setFiring(true);
-								getPanelfull().getGame().acceleration();
-
-							}
-							if(a==32){
-								//getPanelfull().setFiring(false);
-								getPanelfull().shoot();
-							}
-							if(a==27){
-								if(fullscreen){
-									changeScreen();
-									wereinfull=true;
-								}else{
-									wereinfull=false;
-								}
-								getJFrame().setEnabled(false);
-								getNome().setVisible(true);
-								pressed.remove(27);
-								paused=true;
-							}
-							if(a==70){/*
-								Toolkit tk = Toolkit.getDefaultToolkit();  
-								int xSize = ((int) tk.getScreenSize().getWidth());  
-								int ySize = ((int) tk.getScreenSize().getHeight());
-								getJFrame().setSize(xSize,ySize);  
-								getJFrame().setVisible(false);
-								getJFrame().setUndecorated(true);
-								getJFrame().setVisible(true);
-								getJFrame().repaint();
-							 */
-								pressed.remove(70);
-								changeScreen();
-
-
-							}
-
-						}
-					}else{
-						for(int a:pressed){
-							if(a==10){
-								restart();
-							}
-							if(a==27){
-								if(fullscreen){
-									changeScreen();
-								}
-								getJFrame().setEnabled(false);
-								getNome().setVisible(true);
-								pressed.remove(27);
-								paused=true;
-
-							}
-							if(a==70){
-								pressed.remove(70);
-								changeScreen();
-
-
-							}
-						}
-					}
+          //keyanalizer();
 				}
 				public void keyTyped(java.awt.event.KeyEvent e) {
 				}
 				public void keyReleased(java.awt.event.KeyEvent e) {
-					pressed.remove(e.getKeyCode());
+					pressed.remove((Integer)e.getKeyCode());
 				}
 			});
 		}

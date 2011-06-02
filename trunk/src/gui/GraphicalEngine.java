@@ -43,6 +43,7 @@ public class GraphicalEngine extends JPanel {
 	private String currentname;
 	private boolean blink=true;
 	long tempo_ini=-1;
+	
 
 
 	public GraphicalEngine clone(){
@@ -50,7 +51,7 @@ public class GraphicalEngine extends JPanel {
 		g.game=game;
 		g.firing=firing;
 		g.ship=ship;
-		g.ship_fired=ship;
+		g.ship_fired=ship_fired;
 		g.asteroid=asteroid;
 		g.shootfx=shootfx;
 		g.soundeffects=soundeffects;
@@ -59,6 +60,7 @@ public class GraphicalEngine extends JPanel {
 		g.currentname=currentname;
 		g.blink=blink;
 		g.tempo_ini=tempo_ini;
+		g.setSize(this.getSize());
 		return g;
 	}
 	public void setter(GraphicalEngine g){
@@ -66,7 +68,7 @@ public class GraphicalEngine extends JPanel {
 		g.game=game;
 		g.firing=firing;
 		g.ship=ship;
-		g.ship_fired=ship;
+		g.ship_fired=ship_fired;
 		g.asteroid=asteroid;
 		g.shootfx=shootfx;
 		g.soundeffects=soundeffects;
@@ -78,6 +80,12 @@ public class GraphicalEngine extends JPanel {
 		//return g;
 	}
 
+	public ArrayList<Highscores> getPont() {
+		return pont;
+	}
+	public void setPont(ArrayList<Highscores> pont) {
+		this.pont = pont;
+	}
 	public String getCurrentname() {
 		return currentname;
 	}
@@ -155,8 +163,12 @@ public class GraphicalEngine extends JPanel {
 
 	//mudar para a logica
 	private void addScore(){
+		
+		
+		
 		Highscores h=new Highscores(game.getPlayername(), game.getPontuacao());
 		pont.add(h);
+		System.out.println(game.getPlayername()+" - "+game.getPontuacao()+" Added");
 		Collections.sort(pont);
 		if(pont.size()>10){
 			while(pont.size()>10){
@@ -168,7 +180,7 @@ public class GraphicalEngine extends JPanel {
 
 	public void newGame() {
 		this.game = new Engine(this.getHeight(), this.getWidth());
-		this.game.getSpaceShip().setAceleration((float)1);
+		this.game.getSpaceShip().setAceleration((float)0.5);
 		firing=false;
 		for(Highscores a:pont){
 			a.reset();
@@ -187,8 +199,6 @@ public class GraphicalEngine extends JPanel {
 				game.ship_explosion.start();
 
 				addScore();
-
-
 				game=null;
 			}
 		}else{
@@ -255,25 +265,6 @@ public class GraphicalEngine extends JPanel {
 		// g.drawRect(0, 0, this.getWidth(), this.getHeight());
 		if (game != null) {
 			if(game.isVivo()){
-				if(cheatao){
-					g.rotate(game.getSpaceShip().getRotation(), (int) game
-							.getSpaceShip().getX() + ship.getWidth() / 8, (int) game
-							.getSpaceShip().getY() + ship.getHeight() / 8);
-					if (ship != null && ship_fired!=null) {
-						if(!(firing)){
-							g.drawImage(Toolkit.getDefaultToolkit().createImage(ship.getSource()),(int) game.getSpaceShip().getX(),
-									(int) game.getSpaceShip().getY(),ship.getWidth()/4,ship.getHeight()/4,null);
-						}else{
-							g.drawImage(Toolkit.getDefaultToolkit().createImage(ship_fired.getSource()),(int) game.getSpaceShip().getX(),
-									(int) game.getSpaceShip().getY(),ship_fired.getWidth()/4,ship_fired.getHeight()/4,null);
-							/*
-							g.drawImage(ship_fired, null, (int) game.getSpaceShip().getX(),
-									(int) game.getSpaceShip().getY());*/
-						}
-
-
-					}
-				}
 				game.setHeight(this.getHeight());
 				game.setWidth(this.getWidth());
 				Color c=new Color(255, 255, 255);
@@ -286,60 +277,38 @@ public class GraphicalEngine extends JPanel {
 					//g.drawOval((int)game.getBullets().get(i).getPos_x(),(int)game.getBullets().get(i).getPos_y(),10,10);
 				}
 				Color original=g.getColor();
-				 
-					BasicStroke dashed = new BasicStroke(3.0f);
-					Stroke saves=g.getStroke();
-					g.setStroke(dashed);
-				
+
+				BasicStroke dashed = new BasicStroke(3.0f);
+				Stroke saves=g.getStroke();
+				g.setStroke(dashed);
+
 				for(int i=0;i<game.getAsteroids().size();i++){
 					//g.translate(game.getAsteroids().get(i).getX(), game.getAsteroids().get(i).getY());
 					g.setColor(game.getAsteroids().get(i).getColor());
 					g.drawPolygon(game.getAsteroids().get(i).getPoly());
 
-					//g.drawRect((int)game.getAsteroids().get(i).getX(),(int)game.getAsteroids().get(i).getY(),10*game.getAsteroids().get(i).getType(),10*game.getAsteroids().get(i).getType());
-					//g.drawImage(Toolkit.getDefaultToolkit().createImage(asteroid.getSource()), (int)game.getAsteroids().get(i).getX(),(int)game.getAsteroids().get(i).getY(),10*game.getAsteroids().get(i).getType(),10*game.getAsteroids().get(i).getType(),null);
-					//if(Math.abs(game.getAsteroids().get(i).getX()-game.getSpaceShip().getX())<ship.getWidth()/8 && Math.abs(game.getAsteroids().get(i).getY()-game.getSpaceShip().getY())<ship.getHeight()/8){
-					/*
-					if(game.getAsteroids().get(i).getPoly().intersects(game.getSpaceShip().getRect2D())){	
-					game.ship_explosion.stop();
-						game.ship_explosion.setMicrosecondPosition(0);
-						game.ship_explosion.start();
-						if(game.isVivo()){
-							addScore();
-						}
-						game.setVivo(false);
-
-
-					}
-					 */
-					//g.translate(-game.getAsteroids().get(i).getX(), -game.getAsteroids().get(i).getY());
-
 				}
 				g.setColor(original);
 				g.setStroke(saves);
-				if(!cheatao){
-					g.rotate(game.getSpaceShip().getRotation(), (int) game
-							.getSpaceShip().getX() + ship.getWidth() / 8, (int) game
-							.getSpaceShip().getY() + ship.getHeight() / 8);
-					//System.out.println(ship.getWidth() / 8+" "+ship.getHeight() / 8);
-					/*	g.drawRect(game
-							.getSpaceShip().getRect().x, game
-							.getSpaceShip().getRect().y, game
-							.getSpaceShip().getRect().width, game
-							.getSpaceShip().getRect().height);*/
-					if (ship != null && ship_fired!=null) {
-						if(!(firing)){
-							g.drawImage(Toolkit.getDefaultToolkit().createImage(ship.getSource()),(int) game.getSpaceShip().getX(),
-									(int) game.getSpaceShip().getY(),ship.getWidth()/4,ship.getHeight()/4,null);
-						}else{
-							g.drawImage(Toolkit.getDefaultToolkit().createImage(ship_fired.getSource()),(int) game.getSpaceShip().getX(),
-									(int) game.getSpaceShip().getY(),ship_fired.getWidth()/4,ship_fired.getHeight()/4,null);
-							/*
+
+				g.rotate(game.getSpaceShip().getRotation(), (int) game
+						.getSpaceShip().getX() + ship.getWidth() / 8, (int) game
+						.getSpaceShip().getY() + ship.getHeight() / 8);
+
+				if (ship != null && ship_fired!=null) {
+					if(!(firing)){
+						g.drawImage(Toolkit.getDefaultToolkit().createImage(ship.getSource()),(int) game.getSpaceShip().getX(),
+								(int) game.getSpaceShip().getY(),ship.getWidth()/4,ship.getHeight()/4,null);
+					}else{
+						System.out.println("acc");
+						g.drawImage(Toolkit.getDefaultToolkit().createImage(ship_fired.getSource()),(int) game.getSpaceShip().getX(),
+								(int) game.getSpaceShip().getY(),ship_fired.getWidth()/4,ship_fired.getHeight()/4,null);
+						/*
 						g.drawImage(ship_fired, null, (int) game.getSpaceShip().getX(),
 								(int) game.getSpaceShip().getY());*/
-						}
 					}
 				}
+
 
 			}
 			else{
