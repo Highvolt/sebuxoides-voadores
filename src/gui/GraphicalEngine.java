@@ -43,7 +43,7 @@ public class GraphicalEngine extends JPanel {
 	private String currentname;
 	private boolean blink=true;
 	long tempo_ini=-1;
-	
+
 
 
 	public GraphicalEngine clone(){
@@ -163,11 +163,11 @@ public class GraphicalEngine extends JPanel {
 
 	//mudar para a logica
 	private void addScore(){
-		
-		
-		
+
+
+
 		Highscores h=new Highscores(game.getPlayername(), game.getPontuacao());
-		
+
 		for (Highscores a : pont) {
 			if(a.equals(h)){
 				System.out.println("duplicado evitado!");
@@ -297,26 +297,26 @@ public class GraphicalEngine extends JPanel {
 				}
 				g.setColor(original);
 				g.setStroke(saves);
+				if(!game.isHyperspace()){
+					g.rotate(game.getSpaceShip().getRotation(), (int) game
+							.getSpaceShip().getX() + ship.getWidth() / 8, (int) game
+							.getSpaceShip().getY() + ship.getHeight() / 8);
 
-				g.rotate(game.getSpaceShip().getRotation(), (int) game
-						.getSpaceShip().getX() + ship.getWidth() / 8, (int) game
-						.getSpaceShip().getY() + ship.getHeight() / 8);
-
-				if (ship != null && ship_fired!=null) {
-					if(!(firing)){
-						g.drawImage(Toolkit.getDefaultToolkit().createImage(ship.getSource()),(int) game.getSpaceShip().getX(),
-								(int) game.getSpaceShip().getY(),ship.getWidth()/4,ship.getHeight()/4,null);
-					}else{
-						System.out.println("acc");
-						g.drawImage(Toolkit.getDefaultToolkit().createImage(ship_fired.getSource()),(int) game.getSpaceShip().getX(),
-								(int) game.getSpaceShip().getY(),ship_fired.getWidth()/4,ship_fired.getHeight()/4,null);
-						/*
+					if (ship != null && ship_fired!=null) {
+						if(!(firing)){
+							g.drawImage(Toolkit.getDefaultToolkit().createImage(ship.getSource()),(int) game.getSpaceShip().getX(),
+									(int) game.getSpaceShip().getY(),ship.getWidth()/4,ship.getHeight()/4,null);
+						}else{
+							System.out.println("acc");
+							g.drawImage(Toolkit.getDefaultToolkit().createImage(ship_fired.getSource()),(int) game.getSpaceShip().getX(),
+									(int) game.getSpaceShip().getY(),ship_fired.getWidth()/4,ship_fired.getHeight()/4,null);
+							/*
 						g.drawImage(ship_fired, null, (int) game.getSpaceShip().getX(),
 								(int) game.getSpaceShip().getY());*/
+						}
 					}
+
 				}
-
-
 			}
 			else{
 				paintHighscores(g);
@@ -335,7 +335,7 @@ public class GraphicalEngine extends JPanel {
 				g.drawString("Press ESC to change name", this.getWidth()/2-g.getFontMetrics(f).stringWidth("Press ESC to change name")/2, this.getHeight()/2+g.getFontMetrics(f).getHeight()/2);
 				String lastline="Press F to enter or exit Fullscreen";
 				g.drawString(lastline, this.getWidth()/2-g.getFontMetrics(f).stringWidth(lastline)/2, this.getHeight()/2+3*g.getFontMetrics(f).getHeight()/2);
-				
+
 			}
 
 		}

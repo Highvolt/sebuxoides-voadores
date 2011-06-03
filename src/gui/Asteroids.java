@@ -121,6 +121,9 @@ public class Asteroids {
 	private void keyanalizer(){
 		if(getPanelfull().getGame()!=null && getPanelfull().getGame().isVivo()){
 			for(int a:pressed){
+				if(a==16){
+					getPanelfull().getGame().enterhyper();
+				}
 				if (a == 37) {
 					//getPanelfull().setFiring(false);
 					getPanelfull().getGame().getSpaceShip().setRotation((float)(getPanelfull().getGame().getSpaceShip().getRotation()-0.2));
