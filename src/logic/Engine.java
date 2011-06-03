@@ -3,6 +3,7 @@ package logic;
 import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 import javax.sound.sampled.AudioInputStream;
@@ -29,10 +30,39 @@ public class Engine {
 	private double drag=0.025;
 	private String playername="";
 	private int bmax=7;
+	private long last_shoot=0;
+	private long time_between_shoots=200;
+//	ArrayList<Highscores> pont=new ArrayList<Highscores>();
 
 	/* METHODS */
-
-
+	/*
+	public ArrayList<Highscores> getPont() {
+		return pont;
+	}
+	public void setPont(ArrayList<Highscores> pont) {
+		this.pont = pont;
+	}
+*/
+/*	
+	private void addScore(){	
+		Highscores h=new Highscores(getPlayername(), getPontuacao());
+		for (Highscores a : pont) {
+			if(a.equals(h)){
+				System.out.println("duplicado evitado!");
+				return;
+			}
+		}
+		pont.add(h);
+		System.out.println(getPlayername()+" - "+getPontuacao()+" Added");
+		Collections.sort(pont);
+		if(pont.size()>10){
+			while(pont.size()>10){
+				pont.remove(10);
+			}
+			Collections.sort(pont);
+		}
+	}
+	*/
 	public boolean isVivo() {
 		return vivo;
 	}
@@ -143,11 +173,14 @@ public class Engine {
 	}
 
 	public boolean shoot(float x, float y) {
-		System.out.println("Shooted");
-		if(bullets.size()<bmax){
-			this.bullets.add(new Bullet(x, y, default_bullet_acc, spaceShip
-					.getRotation()));
-			return true;
+		//System.out.println("Shooted");
+		if(System.currentTimeMillis()-last_shoot>time_between_shoots){
+			last_shoot=System.currentTimeMillis();
+			if(bullets.size()<bmax){
+				this.bullets.add(new Bullet(x, y, default_bullet_acc, spaceShip
+						.getRotation()));
+				return true;
+			}
 		}
 		return false;
 	}
@@ -227,7 +260,7 @@ public class Engine {
 			for (int j=0;j< asteroids.size();j++) {
 				Asteroid a=asteroids.get(j);
 				if(a.getPoly().intersects(new Rectangle((int)v.getPos_x(),(int)v.getPos_y(),5,5))){
-				//if(Math.abs(v.getPos_x()-a.getX())<=10*a.getType() && Math.abs(v.getPos_y()-a.getY())<=10*a.getType()){
+					//if(Math.abs(v.getPos_x()-a.getX())<=10*a.getType() && Math.abs(v.getPos_y()-a.getY())<=10*a.getType()){
 					System.out.println("Embateu!");
 					if(bullets.size()!=0){
 						bullets.remove(i);
@@ -266,6 +299,7 @@ public class Engine {
 					ship_explosion.start();
 				}
 				System.out.println("morreu");
+			//	addScore();
 				return;
 			}
 

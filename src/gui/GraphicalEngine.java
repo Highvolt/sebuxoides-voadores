@@ -333,6 +333,9 @@ public class GraphicalEngine extends JPanel {
 				g.setColor(Color.WHITE);
 				g.drawString("Press Enter to Continue", this.getWidth()/2-g.getFontMetrics(f).stringWidth("Press Enter to Continue")/2, this.getHeight()/2-g.getFontMetrics(f).getHeight()/2);
 				g.drawString("Press ESC to change name", this.getWidth()/2-g.getFontMetrics(f).stringWidth("Press ESC to change name")/2, this.getHeight()/2+g.getFontMetrics(f).getHeight()/2);
+				String lastline="Press F to enter or exit Fullscreen";
+				g.drawString(lastline, this.getWidth()/2-g.getFontMetrics(f).stringWidth(lastline)/2, this.getHeight()/2+3*g.getFontMetrics(f).getHeight()/2);
+				
 			}
 
 		}
