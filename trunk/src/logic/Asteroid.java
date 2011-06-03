@@ -19,7 +19,7 @@ public class Asteroid {
 	public static final int Grande=3;
 	public static final int Medio=2;
 	public static final int Pequeno=1;
-
+	private int sizepol;
 
 	/* METHODS */
 	public float getX() {
@@ -53,10 +53,10 @@ public class Asteroid {
 	}
 
 	public Polygon getPoly() {
-		int pol_xt[]=new int[type*3];
-		int pol_yt[]=new int[type*3];
+		int pol_xt[]=new int[sizepol];
+		int pol_yt[]=new int[sizepol];
 		//System.out.println("X: "+pos_x+" Y: "+pos_y);
-		for(int i=0; i<type*3;i++){
+		for(int i=0; i<sizepol;i++){
 			pol_xt[i]=(int)pos_x+pol_x[i];
 			pol_yt[i]=(int)pos_y+pol_y[i];
 			//System.out.println('\t'+"X: "+pol_xt[i]+" Y: "+pol_yt[i]);
@@ -99,8 +99,9 @@ public class Asteroid {
 		this.aceleration = aceleration;
 		this.rotation = rotation;
 		Random a=new Random() ;
-		pol_x=new int[type*3];
-		pol_y=new int[type*3];
+		sizepol=type*4;
+		pol_x=new int[sizepol];
+		pol_y=new int[sizepol];
 		this.color=new Color(20+a.nextInt(235),20+a.nextInt(235),20+a.nextInt(235));
 		poly= new Polygon();/*
 		for(int i=0; i<type*6;i++){
@@ -109,11 +110,11 @@ public class Asteroid {
 			poly.addPoint((int) x+xd,(int)y+yd);
 			poly.addPoint((int) x-xd,(int)y-yd);
 		}*/
-		for (int i = 0; i < type*3; i++){
+		for (int i = 0; i < sizepol; i++){
 			int deltax=a.nextInt(type*7);
 			int deltay=a.nextInt(type*7);
-			pol_x[i]=(int) (-deltax + type*10 * Math.cos(i * 2 * Math.PI / (type*3)));
-			pol_y[i]=(int) (-deltay + type*10 * Math.sin(i * 2 * Math.PI / (type*3)));
+			pol_x[i]=(int) (-deltax + type*10 * Math.cos(i * 2 * Math.PI / (sizepol)));
+			pol_y[i]=(int) (-deltay + type*10 * Math.sin(i * 2 * Math.PI / (sizepol)));
 			/*poly.addPoint((int) (x-deltax + type*5 * Math.cos(i * 2 * Math.PI / (type*3))),
 					(int) (y-deltay + type*5* Math.sin(i * 2 * Math.PI / (type*3))));
 
