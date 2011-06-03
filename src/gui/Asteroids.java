@@ -26,6 +26,8 @@ import javax.swing.JLabel;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 
+import logic.Highscores;
+
 public class Asteroids {
 	private boolean paused=false;
 	private JFrame jFrame = null; // @jve:decl-index=0:visual-constraint="20,15"
@@ -285,6 +287,7 @@ public class Asteroids {
 			getJanfull().getGraphicsConfiguration().getDevice().setFullScreenWindow(getJanfull());
 			fullscreen=true;
 			getJPanel().setter(panelfull);
+			//getJPanel().setPont(null);
 			//panelfull.(getJPanel().getGame());
 			getPanelfull().requestFocus();
 		}else{
@@ -296,6 +299,7 @@ public class Asteroids {
 			getJFrame().setVisible(true);
 			getJPanel().requestFocus();
 			getPanelfull().setter(jPanel);
+			//getPanelfull().setPont(null);
 			/*jPanel=null;
 			jPanel=getPanelfull();
 			jPanel.repaint();*/

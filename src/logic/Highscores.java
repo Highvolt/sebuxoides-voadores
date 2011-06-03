@@ -15,6 +15,7 @@ public class Highscores implements Comparable<Highscores>{
 	private ArrayList<Asteroid> ast ;
 	private FontMetrics letras;
 	private boolean done=false;
+	private long timestamp=0;
 	
 	public boolean isDone() {
 		return done;
@@ -35,10 +36,17 @@ public class Highscores implements Comparable<Highscores>{
 	public Highscores(String nome, int score){
 		this.name=nome;
 		this.score=score;
+		this.timestamp=System.currentTimeMillis();
 		
 
 	}
 
+
+	@Override
+	public boolean equals(Object obj) {
+		Highscores a=(Highscores) obj;
+		return name.equals(a.name) && score.equals(a.score) && (Math.abs(timestamp-a.timestamp)<100);
+	}
 
 	public double getX() {
 		return x;
