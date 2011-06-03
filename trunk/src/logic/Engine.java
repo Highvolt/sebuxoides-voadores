@@ -32,7 +32,10 @@ public class Engine {
 	private int bmax=7;
 	private long last_shoot=0;
 	private long time_between_shoots=200;
-//	ArrayList<Highscores> pont=new ArrayList<Highscores>();
+	private boolean hyperspace=false;
+	private long start_trip=0;
+	private long time_on=500;
+	//	ArrayList<Highscores> pont=new ArrayList<Highscores>();
 
 	/* METHODS */
 	/*
@@ -42,8 +45,8 @@ public class Engine {
 	public void setPont(ArrayList<Highscores> pont) {
 		this.pont = pont;
 	}
-*/
-/*	
+	 */
+	/*	
 	private void addScore(){	
 		Highscores h=new Highscores(getPlayername(), getPontuacao());
 		for (Highscores a : pont) {
@@ -62,7 +65,7 @@ public class Engine {
 			Collections.sort(pont);
 		}
 	}
-	*/
+	 */
 	public boolean isVivo() {
 		return vivo;
 	}
@@ -140,6 +143,27 @@ public class Engine {
 				default_bullet_acc, spaceShip.getRotation()));
 	}
 
+	public boolean isHyperspace() {
+		return hyperspace;
+	}
+
+	public void setHyperspace(boolean hyperspace) {
+		this.hyperspace = hyperspace;
+	}
+
+	public void Hyperspace(){
+		if(hyperspace){
+			if(System.currentTimeMillis()-start_trip>time_on){
+				Random a=new Random();
+				spaceShip.setX(a.nextInt(width));
+				spaceShip.setY(a.nextInt(height));
+				hyperspace=false;
+
+			}
+		}
+
+	}
+
 	public void place_new_asteroid() {
 		if (asteroids.size() >= num_maximo) {
 			return;
@@ -171,17 +195,21 @@ public class Engine {
 			}
 		}
 	}
-
+	public void enterhyper(){
+		hyperspace=true;
+		start_trip=System.currentTimeMillis();
+	}
 	public boolean shoot(float x, float y) {
 		//System.out.println("Shooted");
-		if(System.currentTimeMillis()-last_shoot>time_between_shoots){
-			last_shoot=System.currentTimeMillis();
-			if(bullets.size()<bmax){
-				this.bullets.add(new Bullet(x, y, default_bullet_acc, spaceShip
-						.getRotation()));
-				return true;
+		if(!hyperspace)
+			if(System.currentTimeMillis()-last_shoot>time_between_shoots){
+				last_shoot=System.currentTimeMillis();
+				if(bullets.size()<bmax){
+					this.bullets.add(new Bullet(x, y, default_bullet_acc, spaceShip
+							.getRotation()));
+					return true;
+				}
 			}
-		}
 		return false;
 	}
 
@@ -209,7 +237,8 @@ public class Engine {
 		 * Math.pow(spaceShip.getAceleration()*Math.cos(spaceShip
 		 * .getAccRotation()), 2))); float
 		 */
-
+		if(hyperspace)
+			return;
 		spaceShip.setVx((float) (spaceShip.getVx() + spaceShip.getAceleration()
 				* Math.sin((double) spaceShip.getRotation())));
 		spaceShip.setVy((float) (spaceShip.getVy() + spaceShip.getAceleration()
@@ -220,7 +249,7 @@ public class Engine {
 	}
 
 	public void update() {
-
+		Hyperspace();
 
 		this.spaceShip.setVx((float)(this.spaceShip.getVx()*(1-this.drag)));
 		this.spaceShip.setVy((float)(this.spaceShip.getVy()*(1-this.drag)));
@@ -274,8 +303,8 @@ public class Engine {
 					}
 					//j=asteroids.size();
 					if(a.getType()!=Asteroid.Pequeno){
-						asteroids.add(new Asteroid(a.getX(), a.getY(), a.getAceleration(), (float)(a.getRotation()+0.5*Math.PI), a.getType()-1));
-						asteroids.add(new Asteroid(a.getX(), a.getY(), a.getAceleration(), (float)(a.getRotation()-0.5*Math.PI), a.getType()-1));
+						asteroids.add(new Asteroid(a.getX(), a.getY(), a.getAceleration(), (float)(v.getAngle()+0.5*/*Math.PI)+0.1**/a.getRotation()), a.getType()-1));
+						asteroids.add(new Asteroid(a.getX(), a.getY(), a.getAceleration(), (float)(v.getAngle()-0.5*/*Math.PI)+0.1**/a.getRotation()), a.getType()-1));
 					}
 					asteroids.remove(a);
 					break;
@@ -291,17 +320,18 @@ public class Engine {
 
 
 			//if(Math.abs(v.getX()-getSpaceShip().getX())<2 && Math.abs(v.getY()-getSpaceShip().getY())<2){
-			if(getAsteroids().get(i).getPoly().intersects(getSpaceShip().getRect2D())){
-				setVivo(false);
-				if(soundeffects){
-					ship_explosion.stop();
-					ship_explosion.setMicrosecondPosition(0);
-					ship_explosion.start();
+			if(!hyperspace)
+				if(getAsteroids().get(i).getPoly().intersects(getSpaceShip().getRect2D())){
+					setVivo(false);
+					if(soundeffects){
+						ship_explosion.stop();
+						ship_explosion.setMicrosecondPosition(0);
+						ship_explosion.start();
+					}
+					System.out.println("morreu");
+					//	addScore();
+					return;
 				}
-				System.out.println("morreu");
-			//	addScore();
-				return;
-			}
 
 
 			v.setX((float) (v.getX() + v.getAceleration()
