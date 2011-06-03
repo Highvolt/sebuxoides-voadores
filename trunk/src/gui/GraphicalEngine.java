@@ -167,6 +167,13 @@ public class GraphicalEngine extends JPanel {
 		
 		
 		Highscores h=new Highscores(game.getPlayername(), game.getPontuacao());
+		
+		for (Highscores a : pont) {
+			if(a.equals(h)){
+				System.out.println("duplicado evitado!");
+				return;
+			}
+		}
 		pont.add(h);
 		System.out.println(game.getPlayername()+" - "+game.getPontuacao()+" Added");
 		Collections.sort(pont);
