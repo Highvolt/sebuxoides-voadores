@@ -1,0 +1,1 @@
+Remake of Asteroids implemented in java for LPOO, a course of 2nd year of Informatics Engineering on FEUP.
